@@ -1,5 +1,3 @@
-package org.example;
-
 import api.OrderApi;
 import api.UserApi;
 import io.qameta.allure.Description;
@@ -44,7 +42,7 @@ public class CreateOrderTest {
     //с неверным хешем ингредиентов.
 
 
-    //1 Создание заказа:     //с авторизацией;
+    //1 Создание заказа: //с авторизацией;
     @Test
     @DisplayName("Создание заказа с авторизацией и валидными ингредиентами")
     @Description("Проверка на успешное создание заказа с авторизацией и валидными ингредиентами")
