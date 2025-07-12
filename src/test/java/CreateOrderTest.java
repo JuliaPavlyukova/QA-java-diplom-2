@@ -28,6 +28,7 @@ public class CreateOrderTest {
                 .path("data._id");
     }
 
+
     @Before
     public void setUp() {
         Faker faker = new Faker();
@@ -37,14 +38,15 @@ public class CreateOrderTest {
         accessToken = userApi.getAccessToken(response);
     }
 
-//    Создание заказа:
-//без ингредиентов;
-//с неверным хешем ингредиентов.
+
+    //Создание заказа:
+    //без ингредиентов;
+    //с неверным хешем ингредиентов.
 
 
-// 1 Создание заказа:     //с авторизацией;
+    //1 Создание заказа:     //с авторизацией;
     @Test
-    @DisplayName("Create order with authorization and valid ingredients")
+    @DisplayName("Создание заказа с авторизацией и валидными ингредиентами")
     @Description("Проверка на успешное создание заказа с авторизацией и валидными ингредиентами")
     public void orderCanBeCreatedWithAuthAndValidIngredientsTest() {
         List<String> ingredients = getValidIngredients();
@@ -55,9 +57,9 @@ public class CreateOrderTest {
     }
 
 
-    //2   Создание заказа: //без авторизации;
+    //2 Создание заказа: //без авторизации;
     @Test
-    @DisplayName("Create order without authorization")
+    @DisplayName("Создание заказа без авторизации")
     @Description("Проверка на создание заказа без авторизации")
     public void orderCanBeCreatedWithoutAuthTest() {
         List<String> ingredients = getValidIngredients();
@@ -68,11 +70,9 @@ public class CreateOrderTest {
     }
 
 
-
-
-    //    Создание заказа: //без ингредиентов;
+    //Создание заказа: //без ингредиентов;
     @Test
-    @DisplayName("Create order without ingredients")
+    @DisplayName("Создание заказа с авторизацией без ингредиентов")
     @Description("Проверка на невозможность создания заказа без ингредиентов")
     public void orderCannotBeCreatedWithoutIngredientsTest() {
         Order order = Order.emptyOrder();
@@ -81,19 +81,49 @@ public class CreateOrderTest {
         orderChecks.checkOrderCreationWithoutIngredientsFails(response);
     }
 
-//    Создание заказа: //    с неверным хешем ингредиентов.
+
+    //Создание заказа: //    с неверным хешем ингредиентов.
     @Test
-    @DisplayName("Create order with invalid ingredients")
+    @DisplayName("Создание заказа с невалидными ингредиентами")
     @Description("Проверка на невозможность создания заказа с невалидными ингредиентами")
     public void orderCannotBeCreatedWithInvalidIngredientsTest() {
         Order order = Order.invalidOrder();
         ValidatableResponse response = orderApi.createOrderWithAuth(order, accessToken);
-        System.out.println("order " +order.getIngredients() );
         orderChecks.checkOrderCreationWithInvalidIngredientsFails(response);
     }
 
 
-    // удаляем созданного пользователя
+    //Получение списка заказов: //с авторизацией;
+    @Test
+    @DisplayName("Получение списка заказов с автризацией")
+    @Description("Проверка на успешное получение списка заказов с автризацией")
+    public void orderCanBeListedWithAuthTest() {
+        List<String> ingredients = getValidIngredients();
+        Order order = Order.validOrder(ingredients);
+        // Создаем заказ
+        orderApi.createOrderWithAuth(order, accessToken);
+        // Смотрим список заказов пользователя
+        ValidatableResponse response = orderApi.getOrders(accessToken);
+        orderChecks.checkGetOrdersWithAuth(response);
+    }
+
+
+    //Получение списка заказов: //без авторизации;
+    @Test
+    @DisplayName("Получение списка заказов без автризации")
+    @Description("Проверка на успешное получение списка заказов без автризации")
+    public void orderCanNotBeListedWithAuthTest() {
+        List<String> ingredients = getValidIngredients();
+        Order order = Order.validOrder(ingredients);
+        // Создаем заказ
+        orderApi.createOrderWithAuth(order, accessToken);
+        // Смотрим список заказов без автризации пользователя
+        ValidatableResponse response = orderApi.getOrders(null);
+        orderChecks.checkGetOrdersWithoutAuth(response);
+    }
+
+
+    //Удаляем созданного пользователя
     @After
     public void cleanUp() {
         if (accessToken != null) {

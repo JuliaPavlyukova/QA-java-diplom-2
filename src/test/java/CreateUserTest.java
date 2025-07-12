@@ -18,19 +18,15 @@ public class CreateUserTest {
     private String accessToken = null;
 
 
-    //
     Faker faker = new Faker();
     //mail, password, name
     User user = new User(faker.internet().emailAddress(),  faker.internet().password(), faker.name().firstName());
-   // User withoutEmail = new User("", faker.internet().password(), faker.name().firstName());
     User withoutEmail = new User(null, faker.internet().password(), faker.name().firstName());
     User withoutPassword = new User(faker.internet().emailAddress(), null, faker.name().lastName());
     User withoutName= new User(faker.internet().emailAddress(), faker.internet().password(), null);
 
 
-
-
-//1 Создание пользователя: //создать уникального пользователя;
+    //1 Создание пользователя: //создать уникального пользователя;
     @Test
     @DisplayName("Cоздание пользователя")
     @Description("Cоздать уникального пользователя;")
@@ -38,10 +34,9 @@ public class CreateUserTest {
         Response response = userApi.createUser(user);
         userApi.getAccessToken(response);
         userSteps.checkedStatusResponse(response, SC_OK);
-        userSteps
-                .checkedBodyResponseSuccessfulAuthorization(response, user
-                        .getEmail(), user.getName());
+        userSteps.checkedBodyResponseSuccessfulAuthorization(response, user.getEmail(), user.getName());
     }
+
 
     //2 Создание пользователя: //создать пользователя, который уже зарегистрирован;
     @Test
@@ -55,22 +50,22 @@ public class CreateUserTest {
         userSteps.checkedBodyInvalidResponse(responseCreateNewUser, false, "User already exists");
     }
 
-//Создание пользователя: //создать пользователя и не заполнить одно из обязательных полей.
-    /// *************************
+
+    //Создание пользователя: //создать пользователя и не заполнить одно из обязательных полей.
     @Test
-    @DisplayName("Вход по логину зарегестрированного пользователя")
-    @Description("Вход под существующим пользователем. Оьзователе и токен авторизации.")
+    @DisplayName("Нельзя создать пользователя без логина")
+    @Description("При попытке создать пользователя без логина ошибка")
     public void userLoginWithoutEmail() {
         Response response = userApi.createUser(withoutEmail);
         userSteps.checkedStatusResponse(response, SC_FORBIDDEN);
         userSteps.checkedBodyWithoutField(response);
     }
 
+
     //Создание пользователя: //создать пользователя и не заполнить одно из обязательных полей.
-    /// *************************
     @Test
-    @DisplayName("Вход по логину зарегестрированного пользователя")
-    @Description("Вход под существующим пользователем. Оьзователе и токен авторизации.")
+    @DisplayName("Нельзя создать пользователя без пароля")
+    @Description("При попытке создать пользователя без пароля ошибка")
     public void userLoginWithoutPassword() {
         Response response = userApi.createUser(withoutPassword);
         userSteps.checkedStatusResponse(response, SC_FORBIDDEN);
@@ -78,12 +73,10 @@ public class CreateUserTest {
     }
 
 
-
-    //Создание пользователя: //создать пользователя и не заполнить одно из обязательных полей.
-    /// *************************
+    //  Создание пользователя: //создать пользователя и не заполнить одно из обязательных полей.
     @Test
-    @DisplayName("Вход по логину зарегестрированного пользователя")
-    @Description("Вход под существующим пользователем. Оьзователе и токен авторизации.")
+    @DisplayName("Нельзя создать пользователя без имени")
+    @Description("ВПри попытке создать пользователя без имени ошибка")
     public void userLoginWithoutName() {
         Response response = userApi.createUser(withoutName);
         userSteps.checkedStatusResponse(response, SC_FORBIDDEN);
@@ -91,63 +84,53 @@ public class CreateUserTest {
     }
 
 
-//    Логин пользователя: //вход под существующим пользователем;
+    //Логин пользователя: //вход под существующим пользователем;
     @Test
     @DisplayName("Вход по логину зарегестрированного пользователя")
     @Description("Вход под существующим пользователем. Ответ: 200 ОК. В теле ответа вернётся информация о пользователе и токен авторизации.")
     public void userLoginTest() {
         Response response = userApi.createUser(user);
-        System.out.println("user 1  " +user.getEmail() + " " + user.getPassword() + " " + user.getName());
         Response response2 = userApi.loginUser(user);
-        System.out.println("user 2  " +user.getEmail() + " " + user.getPassword() + " " + user.getName());
         userSteps.checkedStatusResponse(response2, SC_OK);
         userSteps.checkedBodyResponseSuccessfulAuthorization(response2, user.getEmail(), user.getName());
     }
 
 
-
-
-//    Логин пользователя: // вход с неверным логином и паролем.
+    //Логин пользователя: // вход с неверным логином и паролем.
     @Test
-    @DisplayName("Вход по *************")
-    @Description("Вход под существующим  ")
+    @DisplayName("Вход с пустым паролем")
+    @Description("Вход под существующим пользователем с пустым паролем")
     public void userAuthorWithoutPasswordTest() {
         Response response = userApi.createUser(user);
-        //emailAddress(), password(),firstName()
         User user2 = new User(user.getEmail(), "",  user.getEmail());
-        System.out.println("user 2  " + user2);
         Response response2 = userApi.loginUser(user2);
         userSteps.checkedStatusResponse(response2, SC_UNAUTHORIZED);
-        System.out.println("statusCode()  " + response2.statusCode());
         userSteps.checkedBodyWithWrongField(response2);
     }
 
-    //    Логин пользователя: // вход с неверным логином и паролем.
+
+    //Логин пользователя: // вход с неверным логином и паролем.
     @Test
-    @DisplayName("Вход по *************")
-    @Description("Вход под существующим  ")
+    @DisplayName("Вход с неверным логином")
+    @Description("Вход под существующим пользователем с неверным логином")
     public void userAuthorWithWrongNameTest() {
         Response response = userApi.createUser(user);
-        //emailAddress(), password(),firstName()
         User user2 = new User(faker.internet().emailAddress(), user.getPassword(), user.getName());
-        System.out.println("user 2 =====  " + user.getName() + " " + user2.getName());
         Response response2 = userApi.loginUser(user2);
         userSteps.checkedStatusResponse(response2, SC_UNAUTHORIZED);
-        System.out.println("statusCode()  " + response2.statusCode());
         userSteps.checkedBodyWithWrongField(response2);
     }
 
-    //    Логин пользователя: // вход с неверным логином и паролем.
+
+    //Логин пользователя: // вход с неверным логином и паролем.
     @Test
-    @DisplayName("Вход по *************")
-    @Description("Вход под существующим  ")
+    @DisplayName("Вход с неверным паролем")
+    @Description("Вход под существующим пользователем с неверным паролем")
     public void userAuthorWithWrongPasswordTest() {
         Response response = userApi.createUser(user);
         User user2 = new User(user.getEmail(), faker.internet().password(), user.getName());
-        System.out.println("user 2  " + user2);
         Response response2 = userApi.loginUser(user2);
         userSteps.checkedStatusResponse(response2, SC_UNAUTHORIZED);
-        System.out.println("statusCode()  " + response2.statusCode());
         userSteps.checkedBodyWithWrongField(response2);
     }
 

@@ -24,7 +24,6 @@ public class UserApi {
         return (Response) requestSpecification()
                 .body(user)
                 .when()
-                .log().all()
                 .post(CREATE_USER_REQUEST);
     }
 
@@ -42,16 +41,13 @@ public class UserApi {
                 .body(user.getEmail())
                 .body(user.getName())
                 .when()
-                .log().all()
                 .post(LOGIN_USER_REQUEST);
     }
 
 
-
     @Step("Получение accessToken")
     public String getAccessToken(Response response) {
-        return
-                response.jsonPath().getString("accessToken");
+        return response.jsonPath().getString("accessToken");
     }
 
 
@@ -62,8 +58,6 @@ public class UserApi {
                 .header("Authorization",  accessToken)
                 .when()
                 .delete(DELETE_USER_REQUEST)
-                .then().log().all();
+                .then();
     }
-
-
 }
