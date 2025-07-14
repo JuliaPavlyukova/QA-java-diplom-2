@@ -1,5 +1,8 @@
 package pojo;
 
+import io.restassured.response.Response;
+import net.datafaker.Faker;
+
 public class User {
     private String email;
     private String password;
@@ -10,7 +13,9 @@ public class User {
         this.password = password;
         this.name = name;
     }
-    public User() {}
+
+    public User() {
+    }
 
     public String getEmail() {
         return email;
@@ -35,4 +40,5 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
 }

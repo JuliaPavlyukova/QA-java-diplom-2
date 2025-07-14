@@ -20,10 +20,9 @@ public class CreateOrderTest {
     private final OrderSteps orderChecks = new OrderSteps();
     private String accessToken;
 
+
     private List<String> getValidIngredients() {
-        return orderApi.getAvailableIngredients()
-                .extract()
-                .path("data._id");
+        return orderApi.getAvailableIngredients().extract().path("data._id");
     }
 
 
@@ -31,7 +30,7 @@ public class CreateOrderTest {
     public void setUp() {
         Faker faker = new Faker();
         //mail, password, name
-        User user = new User(faker.internet().emailAddress(),  faker.internet().password(), faker.name().firstName());
+        User user = new User(faker.internet().emailAddress(), faker.internet().password(6, 6), faker.name().firstName());
         Response response = userApi.createUser(user);
         accessToken = userApi.getAccessToken(response);
     }
@@ -41,7 +40,6 @@ public class CreateOrderTest {
     //без ингредиентов;
     //с неверным хешем ингредиентов.
 
-
     //1 Создание заказа: //с авторизацией;
     @Test
     @DisplayName("Создание заказа с авторизацией и валидными ингредиентами")
@@ -49,7 +47,6 @@ public class CreateOrderTest {
     public void orderCanBeCreatedWithAuthAndValidIngredientsTest() {
         List<String> ingredients = getValidIngredients();
         Order order = Order.validOrder(ingredients);
-
         ValidatableResponse response = orderApi.createOrderWithAuth(order, accessToken);
         orderChecks.checkOrderCreatedSuccessfully(response);
     }
@@ -62,7 +59,6 @@ public class CreateOrderTest {
     public void orderCanBeCreatedWithoutAuthTest() {
         List<String> ingredients = getValidIngredients();
         Order order = Order.validOrder(ingredients);
-
         ValidatableResponse response = orderApi.createOrderWithoutAuth(order);
         orderChecks.checkOrderCreatedSuccessfully(response);
     }
@@ -74,7 +70,6 @@ public class CreateOrderTest {
     @Description("Проверка на невозможность создания заказа без ингредиентов")
     public void orderCannotBeCreatedWithoutIngredientsTest() {
         Order order = Order.emptyOrder();
-
         ValidatableResponse response = orderApi.createOrderWithAuth(order, accessToken);
         orderChecks.checkOrderCreationWithoutIngredientsFails(response);
     }

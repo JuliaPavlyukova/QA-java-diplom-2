@@ -3,7 +3,6 @@ package api;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import pojo.User;
 
@@ -20,8 +19,8 @@ public class UserApi {
     }
 
     @Step("Создание нового пользователя")
-    public  Response createUser(User user) {
-        return (Response) requestSpecification()
+    public Response createUser(User user) {
+        return requestSpecification()
                 .body(user)
                 .when()
                 .post(CREATE_USER_REQUEST);
@@ -35,15 +34,6 @@ public class UserApi {
 
     }
 
-    @Step("Авторизация ранее созданного пользователя")
-    public Response loginWithoutPassword(User user) {
-        return requestSpecification()
-                .body(user.getEmail())
-                .body(user.getName())
-                .when()
-                .post(LOGIN_USER_REQUEST);
-    }
-
 
     @Step("Получение accessToken")
     public String getAccessToken(Response response) {
@@ -53,8 +43,8 @@ public class UserApi {
 
 // Метод для удаления пользователя
     @Step("Удаление пользователя")
-    public ValidatableResponse deleteUser(String accessToken) {
-        return requestSpecification()
+    public void deleteUser(String accessToken) {
+        requestSpecification()
                 .header("Authorization",  accessToken)
                 .when()
                 .delete(DELETE_USER_REQUEST)

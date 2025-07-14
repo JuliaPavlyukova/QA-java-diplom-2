@@ -9,7 +9,7 @@ public class Constants {
     public static final String CHANGE_INFORMATION_USER_REQUEST = "api/auth/changePassword";
 
     // Endpoint для работы с Orders
-    public static final String ORDERS_REQUEST= "api/orders";
+    public static final String ORDERS_REQUEST = "api/orders";
     public static final String INGREDIENTS_REQUEST = "api/ingredients";
 
 }
